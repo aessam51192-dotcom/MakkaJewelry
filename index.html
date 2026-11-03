@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>مكة للمجوهرات</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+:root{--bg:#fbf8f1;--cd:#fff;--tx:#2b2417;--mu:#7a6e55;--gd:#a8780a;--gt:#fff;--bd:#e6dcc3;color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#17140d;--cd:#221e14;--tx:#f2ead7;--mu:#b3a684;--gd:#d4a537;--gt:#1b1608;--bd:#3a331f;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#17140d;--cd:#221e14;--tx:#f2ead7;--mu:#b3a684;--gd:#d4a537;--gt:#1b1608;--bd:#3a331f;color-scheme:dark}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font:15px/1.6 "Segoe UI",Tahoma,Arial,sans-serif}
+header{background:var(--gd);color:var(--gt);padding:14px 16px;text-align:center;font-size:20px;font-weight:700}
+.tabs{display:flex;gap:6px;padding:10px;overflow-x:auto}
+.tabs button{flex:1;white-space:nowrap}
+main{max-width:900px;margin:auto;padding:0 10px 40px}
+.card{background:var(--cd);border:1px solid var(--bd);border-radius:12px;padding:14px;margin-bottom:12px}
+h3{margin:0 0 10px;color:var(--gd)}
+.g{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.w{grid-column:1/-1}
+label{display:block;font-size:13px;color:var(--mu)}
+input,select,textarea{width:100%;margin-top:3px;padding:9px;border:1px solid var(--bd);border-radius:8px;background:var(--bg);color:var(--tx);font:inherit}
+input[type=tel],input[type=number],input[type=date]{direction:ltr;text-align:right}
+button{padding:9px 14px;border:1px solid var(--gd);border-radius:8px;background:transparent;color:var(--gd);font:inherit;cursor:pointer}
+button.p,.tabs button.on{background:var(--gd);color:var(--gt)}
+button.d{border-color:#b33;color:#b33}
+.row{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.th{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.th div{position:relative}
+.th img,.it img{width:64px;height:64px;object-fit:cover;border-radius:8px;border:1px solid var(--bd);cursor:pointer}
+.th b{position:absolute;top:-6px;left:-6px;background:#b33;color:#fff;border-radius:50%;width:20px;height:20px;text-align:center;line-height:20px;cursor:pointer}
+.it{border-top:1px solid var(--bd);padding:10px 0}
+.it small{color:var(--mu)}
+.st{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px}
+.st div{background:var(--bg);border:1px solid var(--bd);border-radius:10px;padding:10px;text-align:center}
+.st b{display:block;font-size:20px;color:var(--gd)}
+.tw{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th,td{padding:7px;border-bottom:1px solid var(--bd);text-align:right;white-space:nowrap}
+th{color:var(--mu);font-weight:600}
+#lb{position:fixed;inset:0;background:rgba(0,0,0,.85);display:none;align-items:center;justify-content:center;z-index:9}
+#lb img{max-width:95%;max-height:95%}
+.hid{display:none}
+.sum{color:var(--gd);font-weight:600;margin:8px 0}
+#ts{position:fixed;bottom:calc(20px + env(safe-area-inset-bottom,0px));left:50%;transform:translateX(-50%);background:var(--gd);color:var(--gt);padding:10px 16px;border-radius:10px;display:none;z-index:11;max-width:90%;text-align:center}
+#dg{position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;align-items:center;justify-content:center;z-index:10}
+#dg div{background:var(--cd);border:1px solid var(--bd);border-radius:12px;padding:18px;max-width:90%}
+</style>
+</head>
+<body>
+<header>💎 مكة للمجوهرات</header>
+<div class="tabs" id="tabs"></div>
+<main>
+<section id="s_ops"></section>
+<section id="s_sum" class="hid"></section>
+<section id="s_scrap" class="hid"></section>
+<section id="s_bk" class="hid">
+ <div class="card"><h3>تصدير Excel</h3><p class="sum" style="font-weight:400">يتم تصدير العمليات مع ملخص العيار ونوع القطعة (بدون الصور).</p>
+ <div class="row"><button class="p" onclick="xlOps()">تصدير Excel</button></div></div>
+ <div class="card"><h3>نسخة احتياطية</h3><p class="sum" style="font-weight:400">النسخة تشمل كل العمليات وبيانات الكسر والصور. احفظها بانتظام في الهاتف أو Google Drive. بيانات التطبيق نفسها تُحفظ داخل المتصفح.</p>
+ <div class="row"><button class="p" onclick="bk()">نسخة احتياطية</button><button onclick="document.getElementById('rf').click()">استرجع نسخة</button></div>
+ <input type="file" id="rf" accept=".json,application/json" class="hid"></div>
+</section>
+</main>
+<div id="lb" onclick="this.style.display='none'"><img id="lbi" alt=""></div>
+<div id="ts"></div>
+<div id="dg"><div><p id="dgm"></p><div class="row"><button class="p" id="dgy">نعم</button><button id="dgn">لا</button></div></div></div>
+<script>
+const $=id=>document.getElementById(id);
+function toast(m){const t=$('ts');t.textContent=m;t.style.display='block';clearTimeout(toast.h);toast.h=setTimeout(()=>t.style.display='none',6000)}
+window.alert=toast;
+function ask(m,fn){$('dgm').textContent=m;$('dg').style.display='flex';$('dgy').onclick=()=>{$('dg').style.display='none';fn()};$('dgn').onclick=()=>{$('dg').style.display='none'}}
+const KT=['24','21','18','14'],T1=['خاتم','سلسلة','طقم','حلق','دبلة','أسورة','غويشة','دلاية','أخرى'],T2=['خاتم','سلسلة','طقم','حلق','متعدد'];
+const SEC={
+ ops:{t:'عملية',f:[['name','اسم العميل','text'],['phone','رقم التليفون','tel'],['date','التاريخ','date'],['type','نوع القطعة','sel',T1],['karat','العيار','sel',KT],['weight','الوزن (جرام)','number'],['amount','المبلغ','number'],['notes','ملاحظات','area']],ph:'multi',pl:'صور'},
+ scrap:{t:'شراء كسر',f:[['name','اسم الزبون','text'],['phone','رقم التليفون','tel'],['date','التاريخ','date'],['count','عدد القطع','number'],['type','نوع القطعة','sel',T2],['karat','العيار','sel',KT],['weight','الوزن (جرام)','number'],['price','سعر الذهب (جنيه/جرام)','number'],['total','إجمالي السعر (جنيه)','number']],ph:'one',pl:'صورة البطاقة'}
+};
+let D={ops:[],scrap:[]},ED={ops:null,scrap:null},PH={ops:[],scrap:[]};
+try{const x=JSON.parse(localStorage.getItem('makka'));if(x&&x.ops&&x.scrap)D=x}catch(e){}
+function save(){try{localStorage.setItem('makka',JSON.stringify(D));return true}catch(e){alert('المساحة ممتلئة. اعمل نسخة احتياطية وقلل عدد الصور.');return false}}
+const n=v=>Number(v)||0,f2=v=>n(v).toLocaleString('en',{maximumFractionDigits:2}),today=()=>new Date().toISOString().slice(0,10);
+const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const comp=f=>new Promise(r=>{const i=new Image,u=URL.createObjectURL(f);i.onload=()=>{const k=Math.min(1,900/Math.max(i.width,i.height)),c=document.createElement('canvas');c.width=i.width*k;c.height=i.height*k;c.getContext('2d').drawImage(i,0,0,c.width,c.height);URL.revokeObjectURL(u);r(c.toDataURL('image/jpeg',.6))};i.onerror=()=>r(null);i.src=u});
+
+/* tabs */
+const TABS=[['ops','العمليات'],['sum','الملخص'],['scrap','شراء كسر'],['bk','تصدير ونسخ']];
+function tab(k){TABS.forEach(([a])=>{$('s_'+a).classList.toggle('hid',a!=k);$('t_'+a).classList.toggle('on',a==k)});if(k=='sum')summary()}
+$('tabs').innerHTML=TABS.map(([k,l])=>`<button id="t_${k}" onclick="tab('${k}')">${l}</button>`).join('');
+
+/* forms */
+function build(s){const c=SEC[s];
+$('s_'+s).innerHTML=`<div class="card"><h3 id="${s}_h">إضافة ${c.t}</h3><div class="g">`+
+c.f.map(([k,l,t,o])=>`<label class="${t=='area'?'w':''}">${l}`+(t=='sel'?`<select id="${s}_${k}">${o.map(x=>`<option>${x}</option>`).join('')}</select>`:t=='area'?`<textarea id="${s}_${k}" rows="2"></textarea>`:`<input id="${s}_${k}" type="${t}"${t=='number'?' step="any" inputmode="decimal"':''}>`)+`</label>`).join('')+
+`</div><label style="margin-top:10px">${c.pl}<input type="file" accept="image/*"${c.ph=='multi'?' multiple':''} id="${s}_ph"></label><div class="th" id="${s}_th"></div>
+<div class="row"><button class="p" onclick="sv('${s}')">حفظ</button><button onclick="clr('${s}')">جديد / إلغاء التعديل</button>${s=='scrap'?'<button onclick="xlScrap()">تصدير الكسر Excel</button>':''}</div></div>
+<div class="card"><input id="${s}_q" placeholder="بحث بالاسم أو رقم التليفون" oninput="lst('${s}')"><div class="sum" id="${s}_tot"></div><div id="${s}_l"></div></div>`;
+$(s+'_ph').onchange=async e=>{const fs=[...e.target.files];for(const x of fs){const d=await comp(x);if(d){if(c.ph=='one')PH[s]=[d];else PH[s].push(d)}}e.target.value='';thumbs(s)};
+$(s+'_date').value=today()}
+function thumbs(s){$(s+'_th').innerHTML=PH[s].map((d,i)=>`<div><img src="${d}" onclick="zoom(this.src)" alt=""><b onclick="rmp('${s}',${i})">×</b></div>`).join('')}
+function rmp(s,i){PH[s].splice(i,1);thumbs(s)}
+function zoom(u){$('lbi').src=u;$('lb').style.display='flex'}
+function clr(s){SEC[s].f.forEach(([k,,t,o])=>{const e=$(s+'_'+k);e.value=t=='sel'?o[0]:''});$(s+'_date').value=today();PH[s]=[];ED[s]=null;thumbs(s);$(s+'_h').textContent='إضافة '+SEC[s].t}
+function sv(s){const r={};SEC[s].f.forEach(([k])=>r[k]=$(s+'_'+k).value.trim());
+if(!r.name){alert('اكتب اسم العميل');return}
+if(!n(r.weight)){alert('اكتب الوزن');return}
+r.photos=PH[s].slice();
+if(ED[s]){const i=D[s].findIndex(x=>x.id==ED[s]);if(i>=0)r.id=ED[s],D[s][i]=r}else r.id=Date.now()+Math.random();
+if(!ED[s])D[s].push(r);
+if(save()){clr(s);lst(s)}}
+function ed(s,id){const r=D[s].find(x=>x.id==id);if(!r)return;SEC[s].f.forEach(([k])=>$(s+'_'+k).value=r[k]||'');PH[s]=(r.photos||[]).slice();ED[s]=id;thumbs(s);$(s+'_h').textContent='تعديل '+SEC[s].t;$(s+'_h').scrollIntoView({behavior:'smooth'})}
+function del(s,id){ask('حذف هذا السجل؟',()=>{D[s]=D[s].filter(x=>x.id!=id);save();lst(s)})}
+function lst(s){const q=$(s+'_q').value.trim().toLowerCase();
+const a=D[s].filter(r=>!q||(r.name||'').toLowerCase().includes(q)||(r.phone||'').includes(q)).sort((x,y)=>(y.date||'').localeCompare(x.date||'')||y.id-x.id);
+$(s+'_tot').textContent=a.length?`${a.length} سجل · الوزن ${f2(a.reduce((t,r)=>t+n(r.weight),0))} جم`+(s=='ops'?` · المدفوع ${f2(a.reduce((t,r)=>t+n(r.amount),0))}`:` · القطع ${f2(a.reduce((t,r)=>t+n(r.count),0))} · الإجمالي ${f2(a.reduce((t,r)=>t+n(r.total),0))}`):'';
+$(s+'_l').innerHTML=a.length?a.map(r=>`<div class="it"><b>${esc(r.name)}</b> <small dir="ltr">${esc(r.phone)}</small><br>${esc(r.date)} · ${esc(r.type)} · عيار ${esc(r.karat)} · ${f2(r.weight)} جم`+(s=='ops'?` · ${f2(r.amount)} ج.م`:` · ${f2(r.count)} قطعة`+(n(r.price)||n(r.total)?` · سعر الجرام ${f2(r.price)} · الإجمالي ${f2(r.total)} ج.م`:''))+(r.notes?`<br><small>${esc(r.notes)}</small>`:'')+((r.photos||[]).length?`<div class="th">${r.photos.map(d=>`<img src="${d}" onclick="zoom(this.src)" alt="">`).join('')}</div>`:'')+`<div class="row"><button onclick="ed('${s}',${r.id})">تعديل</button><button class="d" onclick="del('${s}',${r.id})">حذف</button></div></div>`).join(''):'<p class="sum">لا توجد سجلات</p>'}
+
+/* summary */
+function grp(a,k){const m={};a.forEach(r=>{const g=m[r[k]]||(m[r[k]]={c:0,w:0,p:0});g.c++;g.w+=n(r.weight);g.p+=n(r.amount)});return m}
+function tbl(m,h){return `<div class="tw"><table><tr><th>${h}</th><th>العمليات</th><th>الوزن (جم)</th><th>المدفوع</th></tr>`+Object.keys(m).sort().map(k=>`<tr><td>${esc(k)}</td><td>${m[k].c}</td><td>${f2(m[k].w)}</td><td>${f2(m[k].p)}</td></tr>`).join('')+'</table></div>'}
+function summary(){const a=D.ops,cu=new Set(a.map(r=>r.phone||r.name));
+$('s_sum').innerHTML=`<div class="card"><h3>ملخص عام</h3><div class="st"><div><b>${cu.size}</b>عدد العملاء</div><div><b>${a.length}</b>عدد العمليات</div><div><b>${f2(a.reduce((t,r)=>t+n(r.weight),0))}</b>إجمالي الوزن (جم)</div><div><b>${f2(a.reduce((t,r)=>t+n(r.amount),0))}</b>إجمالي المدفوع</div></div></div>
+<div class="card"><h3>حسب العيار</h3>${tbl(grp(a,'karat'),'العيار')}</div>
+<div class="card"><h3>حسب نوع القطعة</h3>${tbl(grp(a,'type'),'نوع القطعة')}</div>
+<div class="card"><h3>كل العمليات</h3><div class="tw"><table><tr><th>الاسم</th><th>التليفون</th><th>التاريخ</th><th>القطعة</th><th>العيار</th><th>الوزن</th><th>المدفوع</th></tr>`+
+a.slice().sort((x,y)=>(y.date||'').localeCompare(x.date||'')).map(r=>`<tr><td>${esc(r.name)}</td><td dir="ltr">${esc(r.phone)}</td><td>${esc(r.date)}</td><td>${esc(r.type)}</td><td>${esc(r.karat)}</td><td>${f2(r.weight)}</td><td>${f2(r.amount)}</td></tr>`).join('')+'</table></div></div>'}
+
+/* files */
+function anchor(name,data){const u=URL.createObjectURL(data),a=document.createElement('a');a.href=u;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),4000)}
+async function dl(name,data){
+ try{
+  /* مشاركة الملف مفيدة على الهواتف التي لا تدعم تنزيل Blob كرابط عادي */
+  const file = new File([data], name, {type: data.type || 'application/octet-stream'});
+  if(navigator.canShare && navigator.canShare({files:[file]}) && navigator.share){
+   try{await navigator.share({files:[file], title:name});toast('اختر حفظ الملف أو مكان الحفظ المناسب');return}
+   catch(e){if(e && e.name==='AbortError')return}
+  }
+ }catch(e){}
+ try{anchor(name,data);toast('بدأ تنزيل الملف. راجع مجلد Downloads')}
+ catch(e){toast('تعذر تنزيل الملف. افتح الصفحة في Chrome أو Safari ثم أعد المحاولة')}
+}
+function xl(name,sheets){if(typeof XLSX=='undefined'){toast('مكتبة Excel لم تُحمّل، تأكد من الإنترنت');return}const wb=XLSX.utils.book_new();wb.Workbook={Views:[{RTL:true}]};sheets.forEach(([t,r])=>XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(r.length?r:[{}]),t));
+dl(name,new Blob([XLSX.write(wb,{type:'array',bookType:'xlsx'})],{type:'application/octet-stream'}))}
+function xlOps(){const a=D.ops,g=(m,h)=>Object.keys(m).map(k=>({[h]:k,'العمليات':m[k].c,'الوزن (جم)':+m[k].w.toFixed(2),'المدفوع':m[k].p}));
+xl('makka-operations-'+today()+'.xlsx',[['العمليات',a.map(r=>({'الاسم':r.name,'التليفون':r.phone,'التاريخ':r.date,'القطعة':r.type,'العيار':r.karat,'الوزن (جم)':n(r.weight),'المدفوع':n(r.amount),'ملاحظات':r.notes||''}))],['حسب العيار',g(grp(a,'karat'),'العيار')],['حسب القطعة',g(grp(a,'type'),'القطعة')]])}
+function xlScrap(){xl('makka-scrap-'+today()+'.xlsx',[['الكسر',D.scrap.map(r=>({'اسم الزبون':r.name,'التليفون':r.phone,'التاريخ':r.date,'عدد القطع':n(r.count),'نوع القطعة':r.type,'العيار':r.karat,'الوزن (جم)':n(r.weight),'سعر الذهب (جنيه/جرام)':n(r.price),'الإجمالي':n(r.total)}))]])}
+function bk(){dl('makka-backup-'+today()+'.json',new Blob([JSON.stringify(D)],{type:'application/json'}))}
+$('rf').onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const x=JSON.parse(r.result);if(!Array.isArray(x.ops)||!Array.isArray(x.scrap))throw 0;ask('سيتم استبدال كل البيانات الحالية بالنسخة ('+x.ops.length+' عملية، '+x.scrap.length+' كسر). متابعة؟',()=>{D=x;if(save()){lst('ops');lst('scrap');toast('تم الاسترجاع')}})}catch(_){alert('ملف النسخة غير صالح')}};r.readAsText(f);e.target.value=''};
+
+/* طلب الاحتفاظ ببيانات التطبيق في المتصفح حيثما أمكن */
+if(navigator.storage && navigator.storage.persist){navigator.storage.persist().catch(()=>{});}
+build('ops');build('scrap');lst('ops');lst('scrap');tab('ops');
+</script>
+</body>
+</html>
